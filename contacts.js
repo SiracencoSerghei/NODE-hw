@@ -1,28 +1,63 @@
+const fs = require("fs/promises");
+const { nanoid } = require("nanoid");
+const path = require("path");
 
-const fs = require('fs/promises')
-const path = require('path')
-
-
-const contactsPath = path.join(__dirname, 'db/contacts.json')
+// console.log(__dirname)
+const contactsPath = path.join(__dirname, "db/contacts.json");
 // console.log(contactsPath)
 
+async function listContacts() {
+  const contacts = await fs.readFile(contactsPath);
+  return JSON.parse(contacts);
+}
 
+async function getContactById(contactId) {
+  const contacts = await listContacts()
+  const result = contacts.find(item => item.id === contactId)
+  return result || null
+}
 
-// TODO: задокументировать каждую функцию
-function listContacts() {
-    // ...твой код. Возвращает массив контактов.
+async function addContact(contact) {
+
+  const contacts = await listContacts()
+  const newContact = {
+    id: nanoid(),
+    ... contact,
   }
-  
-  function getContactById(contactId) {
-    // ...твой код. Возвращает объект контакта с таким id. Возвращает null, если объект с таким id не найден.
+  contacts.push(newContact)
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2))
+  return contact
+}
+
+async function removeContact(contactId) {
+  const contacts = await listContacts();
+  const index = contacts.findIndex((item) => item.id === contactId);
+  if (index === -1) {
+    return null;
   }
-  
-  function removeContact(contactId) {
-    // ...твой код. Возвращает объект удаленного контакта. Возвращает null, если объект с таким id не найден.
+  const [contactForDelete] = contacts.splice(index, 1)
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2))
+  return contactForDelete
   }
 
-  module.exports = {
-    listContacts,
-    getContactById,
-    removeContact
+  async function updateContact(id, newContact) {
+
+    const contacts = await listContacts();
+  const index = contacts.findIndex(item => item.id === id);
+  if (index === -1) {
+    return null;
   }
+  contacts[index] = { id, ...newContact}
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2))
+  console.log(contacts)
+  console.log('hello')
+  return contacts[index]
+  }
+
+module.exports = {
+  listContacts,
+  getContactById,
+  addContact,
+  updateContact,
+  removeContact,
+};

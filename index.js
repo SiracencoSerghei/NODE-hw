@@ -1,29 +1,33 @@
-const users = require('./db/contacts.json')
-
-// console.log(users)
-// const text = require('./db/text.txt')
 const fs = require('fs/promises')
+const contacts = require("./contacts");
 
-const resultText = async () => {
-    try {
-      const data = await (await fs.readFile('./db/text.txt')).toString();
-      return data;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  };
+// console.log(contacts)
 
-//   resultText().then(data => {
-//     console.log(data);
-//   }).catch(error => {
-//     console.error(error);
-//   });
-(async () => {
-    try {
-      const data = await resultText();
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
-  })();
+// (async () => {
+//     console.log(await contacts.listContacts());
+//   })();
+
+// (async () => {
+//     console.log(await contacts.addContact({
+//         name: 'sergio',
+//         email: 'siracencoserghei@gmail.com',
+//         phone: 12141618181,
+//     }));
+//   })();
+
+// (async () => {
+//     console.log(await contacts.getContactById("fZ_xY2AXKFGdVRurpcSRr"));
+//   })();
+
+// (async () => {
+//     console.log(await contacts.removeContact("MmHzXPuFCsE8tnWSNVKIE"));
+//   })();
+
+
+// (async () => {
+//     console.log(await contacts.updateContact('fZ_xY2AXKFGdVRurpcSRr', {
+//         name: 'Sergio',
+//         email: 'siracencoserghei@gmail.com',
+//         phone: '004444443355555',
+//     }));
+//   })();
