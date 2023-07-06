@@ -1,33 +1,72 @@
-const fs = require('fs/promises')
-const contacts = require("./contacts");
+// const yargs = require("yargs");
+// const { hideBin } = require("yargs/helpers")
+const { program } = require("commander")
+const contacts = require("./contacts")
 
-// console.log(contacts)
+async function invokeAction({ action, id, name, email, phone }) {
+  switch (action) {
+    case "list":
+      const allContacts = await contacts.listContacts();
+      return console.table(allContacts);
 
-// (async () => {
-//     console.log(await contacts.listContacts());
-//   })();
+    case "get":
+      const contactById = await contacts.getContactById(id)
+      return console.log(contactById)
 
-// (async () => {
-//     console.log(await contacts.addContact({
-//         name: 'sergio',
-//         email: 'siracencoserghei@gmail.com',
-//         phone: 12141618181,
-//     }));
-//   })();
+    case "add":
+      const addedContact = await contacts.addContact({ name, email, phone })
+      console.log(addedContact)
+      break;
 
-// (async () => {
-//     console.log(await contacts.getContactById("fZ_xY2AXKFGdVRurpcSRr"));
-//   })();
+    case "remove":
+      const removedContact = await contacts.removeContact(id)
+      console.log(removedContact)
+      break;
 
-// (async () => {
-//     console.log(await contacts.removeContact("MmHzXPuFCsE8tnWSNVKIE"));
-//   })();
+    case "update": 
+    const fullName = name.join(" ");
+    const updatedContact = await contacts.updateContact(id, { name: fullName, email, phone });
+    console.log(updatedContact);
+    break;
+
+    default:
+      console.warn("\x1B[31m Unknown action type!");
+  }
+}
+
+// with commander package =======>
+
+program
+.option("-a, --action, <type>" )
+.option("-i, --id, <type>" )
+.option("-n, --name, <type...>" )
+.option("-e, --email, <type>" )
+.option("-p, --phone, <type>" )
+
+program.parse()
+
+const options = program.opts()
+
+invokeAction(options)
 
 
-// (async () => {
-//     console.log(await contacts.updateContact('fZ_xY2AXKFGdVRurpcSRr', {
-//         name: 'Sergio',
-//         email: 'siracencoserghei@gmail.com',
-//         phone: '004444443355555',
-//     }));
-//   })();
+
+
+//  Native method ========>
+
+// const actionIndex = process.argv.indexOf("--action")
+
+// if (actionIndex !== -1) {
+//   const action = process.argv[actionIndex + 1]
+// //   console.log(action)
+//   invokeAction({action})
+// }
+
+// with yargs package =======>
+
+// const arr = hideBin(process.argv)
+// // console.log(arr)
+
+// const { argv } = yargs(arr)
+// // console.log(argv)
+// invokeAction(argv)
